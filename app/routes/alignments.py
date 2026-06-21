@@ -39,14 +39,16 @@ async def forced_alignment(
     request: Request,
     file: Optional[UploadFile] = File(None),
     file_path: Optional[str] = Form(None),
-    text: str = Form(..., description="Transcript to align (required)."),
-    language: str = Form(..., description="ISO 639-1 code, e.g. 'zh','en' (required)."),
+    text: str = Form("", description="Transcript to align (required, must be non-empty)."),
+    language: str = Form("", description="ISO 639-1 code, e.g. 'zh','en' (required)."),
     granularity: str = Form("word", description="word | segment"),
 ) -> AlignmentResponse:
     """Run forced alignment on a single (audio, text) pair."""
     g = _check_granularity(granularity)
     if not text.strip():
         raise HTTPException(status_code=400, detail="text must not be empty")
+    if not language.strip():
+        raise HTTPException(status_code=400, detail="language must not be empty")
     qwen_lang = to_qwen_lang(language)
     if qwen_lang is None:
         raise HTTPException(status_code=400, detail="language is required")
