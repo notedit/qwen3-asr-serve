@@ -1,0 +1,43 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "qwen3-asr-serve"
+version = "1.0.0"
+description = "Production HTTP server for Qwen3-ASR-1.7B + Qwen3-ForcedAligner-0.6B on a single NVIDIA L20 GPU."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+license = { text = "Apache-2.0" }
+authors = [{ name = "qwen3-asr-serve contributors" }]
+keywords = ["asr", "speech-to-text", "qwen", "vllm", "forced-alignment"]
+classifiers = [
+  "License :: OSI Approved :: Apache Software License",
+  "Programming Language :: Python :: 3.11",
+  "Topic :: Multimedia :: Sound/Audio :: Speech",
+]
+
+# NOTE: vllm 0.14.0 + torch 2.9.1 + qwen-asr are installed via install.sh
+# because pip's normal resolver mishandles the manylinux_2_31 wheel platform tag
+# on glibc 2.28 hosts. The deps listed here are the ones pip CAN resolve safely
+# (everything outside the vllm install dance).
+dependencies = [
+  "fastapi>=0.115.0",
+  "uvicorn[standard]>=0.30.0",
+  "python-multipart>=0.0.9",
+  "pydantic>=2.5.0",
+  "pydantic-settings>=2.0.0",
+  "prometheus-client>=0.20.0",
+  "huggingface-hub>=0.24.0",
+  "pynvml>=11.5.0",
+  "soundfile>=0.12.1",
+  "librosa>=0.10.0",
+  "numpy",
+  "requests>=2.26.0",
+]
+
+[project.urls]
+Repository = "https://github.com/yourorg/qwen3-asr-serve"
+
+[tool.setuptools]
+packages = { find = { where = ["."], include = ["app*"] } }
